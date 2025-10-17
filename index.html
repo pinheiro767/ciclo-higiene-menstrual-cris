@@ -371,6 +371,8 @@
                  min-height: -webkit-fill-available;
              }
         }
+
+        /* Mais estilos e animações (omitidos para brevidade, mas estão no JS original) */
     </style>
 </head>
 <body>
@@ -380,7 +382,7 @@
             <h1 style="margin-top: 0; color: #4ecdc4;">🩸 Tabuleiro da Cris - Dignidade Menstrual 🩸</h1>
             <p style="font-size: 1.1em; margin-bottom: 20px;">Assista à história da Cris para começar sua jornada de conhecimento! Clique no vídeo para ativar o som e em 'Começar Jogo' para ir ao tabuleiro.</p>
             
-            <video id="intro-video" controls autoplay muted playsinline src="./duvidas_de_adolescente_sobre_higiene.mp4" style="width: 100%; max-width: 600px; height: auto; border-radius: 15px; margin-bottom: 20px; border: 5px solid white; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);"></video>
+            <video id="intro-video" controls autoplay muted playsinline **src="./Dúvidas_de_Adolescente_Sobre_Higiene.mp4"** style="width: 100%; max-width: 600px; height: auto; border-radius: 15px; margin-bottom: 20px; border: 5px solid white; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);"></video>
             
             <button id="start-button">▶️ Começar Jogo!</button>
         </div>
@@ -391,7 +393,7 @@
             <div class="victory-text" id="victory-message">🏆 PARABÉNS! VOCÊ É UM ESPECIALISTA EM DIGNIDADE MENSTRUAL! 🏆</div>
             <p id="final-score" style="font-size: 1.2em; margin-bottom: 10px; color: #5f27cd; font-weight: bold;">Pontuação: 0 PC e 0 moedas</p>
             
-            <img id="victory-image" src="./Gemini_Generated_Image_2oxeve2oxeve2oxe.jpg" alt="Imagem de Vitória" style="max-width: 100%; height: auto; border-radius: 15px;">
+            <img id="victory-image" **src="./Gemini_Generated_Image_2oxeve2oxeve2oxe.jpg"** alt="Imagem de Vitória" style="max-width: 100%; height: auto; border-radius: 15px;">
             
             <button id="restart-game-victory" class="answer-option" style="margin-top: 20px;">🔄 Jogar Novamente</button>
         </div>
@@ -437,7 +439,7 @@
 
     <div id="notification" class="notification"></div>
 
-    <div class="floating-underwear pink">🩲">🩲</div>
+    <div class="floating-underwear pink">🩲</div>
     <div class="floating-underwear purple">🩲</div>
     <div class="floating-underwear blue">🩲</div>
     <div class="floating-underwear green">🩲</div>
@@ -767,7 +769,7 @@
 
             setTimeout(() => {
                 roulette.classList.remove('spinning');
-                roulette.style.transition = 'none';
+                roulette.style.transition = 'none'; // Desativa transição após o roll
                 setTimeout(() => {
                     moveCris(rollResult);
                 }, 500);
