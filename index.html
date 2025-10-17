@@ -2,927 +2,293 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-title" content="Dignidade Menstrual">
-    <meta name="theme-color" content="#667eea">
-    <meta name="msapplication-TileColor" content="#667eea">
-    <meta name="HandheldFriendly" content="true">
-    <meta name="MobileOptimized" content="320">
-    <title>Tabuleiro da Cris - Dignidade Menstrual</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta do Conhecimento</title>
+
     <style>
-        /* Estilos base do tabuleiro e layout */
         body {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #4a69bd, #6a89cc);
             margin: 0;
             padding: 0;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff, #5f27cd);
-            background-size: 800% 800%;
-            animation: gradientShift 8s ease infinite;
-            min-height: 100%;
-            overflow-x: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-            position: fixed;
-            width: 100%;
-            height: 100%;
+            text-align: center;
+            color: #fff;
         }
-        html { 
-            height: 100%; 
-            height: -webkit-fill-available;
-            position: fixed;
-            width: 100%;
+
+        h1 {
+            margin-top: 30px;
+            font-size: 2em;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+        }
+
+        #roulette-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 40px auto;
+            border-radius: 50%;
             overflow: hidden;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
         }
 
-        #game-container {
-            position: relative;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        /* Estilos de Modais (Introdução/Pergunta/Vitória) */
-        .full-screen-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
+        #roulette-wheel {
+            position: absolute;
             width: 100%;
             height: 100%;
-            height: -webkit-fill-available;
-            background: rgba(0, 0, 0, 0.95);
-            display: none; 
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(15px);
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            border-radius: 50%;
+            transform: rotate(0deg);
+            transition: transform 3s ease-out;
         }
 
-        .full-screen-modal.show {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content-full {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            max-width: 90%;
-            max-height: 90%;
-            padding: 30px;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        #intro-modal .modal-content-full {
-            background: linear-gradient(135deg, #54a0ff, #5f27cd);
-            color: white;
-            justify-content: space-around;
-        }
-
-        #intro-video {
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 5px solid white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        
-        #start-button {
-            background: linear-gradient(135deg, #4ecdc4, #96ceb4);
-            color: #333;
-            border: 3px solid white;
-            padding: 15px 30px;
-            border-radius: 30px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-            margin-top: 20px;
-            touch-action: manipulation;
-            min-height: 44px;
-        }
-        
-        #victory-modal .modal-content-full {
-            background: linear-gradient(135deg, #feca57, #ff9ff3);
-            color: #333;
-            animation: goldShimmer 2s ease-in-out infinite;
-        }
-        
-        #victory-image {
-            width: 100%;
-            max-width: 450px;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 5px solid #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .victory-text {
-            font-size: 2em;
-            font-weight: bold;
-            color: #5f27cd;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
-        }
-
-        /* Estilos do tabuleiro */
-        #board-container {
-            position: relative;
-            width: 90vw;
-            max-width: 500px;
-            height: auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            border: 3px solid #fff;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 8px;
-            padding: 15px;
-            backdrop-filter: blur(20px);
-            aspect-ratio: 5/4;
-        }
-
-        .board-cell {
-            position: relative;
-            background: linear-gradient(135deg, #ff9ff3, #54a0ff, #5f27cd);
-            background-size: 300% 300%;
-            animation: cellPulse 4s ease-in-out infinite;
-            border: 3px solid #fff;
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            text-align: center;
-            padding: 8px;
-            min-height: 80px;
-            aspect-ratio: 1;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            touch-action: manipulation;
-        }
-        
         .roulette-section {
             position: absolute;
             width: 50%;
             height: 50%;
+            background: linear-gradient(135deg, #5f27cd, #54a0ff);
+            border: 1px solid #fff;
             transform-origin: 100% 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            border-right: 2px solid rgba(255,255,255,0.3);
         }
 
-        /* Omissão de outros estilos para brevidade, mas estão no JS original */
+        .roulette-section:nth-child(1) { transform: rotate(0deg) skewY(-30deg); }
+        .roulette-section:nth-child(2) { transform: rotate(60deg) skewY(-30deg); }
+        .roulette-section:nth-child(3) { transform: rotate(120deg) skewY(-30deg); }
+        .roulette-section:nth-child(4) { transform: rotate(180deg) skewY(-30deg); }
+        .roulette-section:nth-child(5) { transform: rotate(240deg) skewY(-30deg); }
+        .roulette-section:nth-child(6) { transform: rotate(300deg) skewY(-30deg); }
+
+        .roulette-pointer {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid #fff;
+            z-index: 10;
+        }
+
+        #roll-button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            background: #1dd1a1;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        #roll-button:hover {
+            background: #10ac84;
+        }
+
+        #game-info {
+            margin-top: 25px;
+            font-size: 1.1em;
+        }
+
+        /* Modal */
+        #question-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        #question-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            color: #333;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        }
+
+        .answer-option {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: #54a0ff;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .answer-option:hover {
+            background: #2e86de;
+        }
+
+        .coin-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            color: gold;
+            opacity: 0;
+            animation: coinFall 1.5s ease-in-out forwards;
+        }
+
+        @keyframes coinFall {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -100%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -150%) scale(0.8); }
+        }
     </style>
 </head>
 <body>
-    
-    <div id="intro-modal" class="full-screen-modal show">
-        <div class="modal-content-full">
-            <h1 style="margin-top: 0; color: #4ecdc4;">🩸 Tabuleiro da Cris - Dignidade Menstrual 🩸</h1>
-            <p style="font-size: 1.1em; margin-bottom: 20px;">Assista à história da Cris para começar sua jornada de conhecimento! Clique no vídeo para ativar o som e em 'Começar Jogo' para ir ao tabuleiro.</p>
-            
-            <video id="intro-video" controls autoplay muted playsinline src="./duvidas_de_adolescente_sobre_higiene.mp4" poster="./gemini_generated_image_2oxeve2oxeve2oxe.jpg" style="width: 100%; max-width: 600px; height: auto; border-radius: 15px; margin-bottom: 20px; border: 5px solid white; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);"></video>
-            
-            <button id="start-button">▶️ Começar Jogo!</button>
-        </div>
-    </div>
-    
-    <div id="victory-modal" class="full-screen-modal">
-        <div class="modal-content-full">
-            <div class="victory-text" id="victory-message">🏆 PARABÉNS! VOCÊ É UM ESPECIALISTA EM DIGNIDADE MENSTRUAL! 🏆</div>
-            <p id="final-score" style="font-size: 1.2em; margin-bottom: 20px; color: #5f27cd; font-weight: bold;">Pontuação: 0 PC e 0 moedas</p>
-            
-            <img id="victory-image" src="./gemini_generated_image_2oxeve2oxeve2oxe.jpg" alt="Imagem de Vitória" style="max-width: 100%; height: auto; border-radius: 15px; margin-bottom: 20px;">
-            
-            <button id="restart-game-victory" class="answer-option" style="margin-top: 10px;">🔄 Jogar Novamente</button>
+    <h1>🎡 Roleta do Conhecimento 🎯</h1>
+
+    <div id="roulette-container">
+        <div class="roulette-pointer"></div>
+        <div id="roulette-wheel">
+            <div class="roulette-section"></div>
+            <div class="roulette-section"></div>
+            <div class="roulette-section"></div>
+            <div class="roulette-section"></div>
+            <div class="roulette-section"></div>
+            <div class="roulette-section"></div>
         </div>
     </div>
 
+    <button id="roll-button">Girar Roleta</button>
 
-    <div id="game-container" style="display: none;">
-
-        <div id="game-info">
-            <div class="info-item">📍 Posição: <span id="current-position">1</span>/20</div>
-            <div class="info-item">🧠 PC: <span id="knowledge-points">0</span></div>
-            <div class="info-item">🪙 Moedas: <span id="coins">0</span></div>
-            <div class="info-item">❓ Perguntas: <span id="questions-answered">0</span>/18</div>
-        </div>
-
-        <div id="board-container">
-            </div>
-
-        <div id="dice-container">
-            <div id="roulette-container">
-                <div class="roulette-glow"></div>
-                <div class="roulette-pointer"></div>
-                <div id="roulette-wheel">
-                    <div class="roulette-section">1</div>
-                    <div class="roulette-section">2</div>
-                    <div class="roulette-section">3</div>
-                    <div class="roulette-section">4</div>
-                    <div class="roulette-section">5</div>
-                    <div class="roulette-section">6</div>
-                </div>
-                <div class="roulette-center"></div>
-            </div>
-            <button id="roll-button">🎯 Girar Roleta</button>
-        </div>
+    <div id="game-info">
+        🧠 Pontos de Conhecimento: <span id="knowledge-points">0</span> <br>
+        💰 Moedas: <span id="coins">0</span> <br>
+        ❓ Perguntas Respondidas: <span id="questions-answered">0</span>
     </div>
 
-    <div id="question-modal" class="full-screen-modal">
+    <!-- Modal de Pergunta -->
+    <div id="question-modal">
         <div class="modal-content">
-            <div class="question-text" id="question-text"></div>
+            <h3 id="question-text"></h3>
             <div id="answer-options"></div>
         </div>
     </div>
 
-    <div id="notification" class="notification"></div>
-
-    <div class="floating-underwear pink">🩲</div>
-    <div class="floating-underwear purple">🩲</div>
-    <div class="floating-underwear blue">🩲</div>
-    <div class="floating-underwear green">🩲</div>
-    <div class="floating-underwear orange">🩲</div>
-    <div class="floating-underwear pink">🩲</div>
-    <div class="floating-underwear purple">🩲</div>
-    <div class="floating-underwear blue">🩲</div>
-    <div class="floating-underwear green">🩲</div>
-    <div class="floating-underwear orange">🩲</div>
-
-    <div class="star-particle" style="left: 5%; animation-delay: 0s;">⭐</div>
-    <div class="star-particle" style="left: 15%; animation-delay: 1s;">✨</div>
-    <div class="star-particle" style="left: 25%; animation-delay: 2s;">⭐</div>
-    <div class="star-particle" style="left: 35%; animation-delay: 3s;">✨</div>
-    <div class="star-particle" style="left: 45%; animation-delay: 4s;">⭐</div>
-    <div class="star-particle" style="left: 55%; animation-delay: 5s;">✨</div>
-    <div class="star-particle" style="left: 65%; animation-delay: 6s;">⭐</div>
-    <div class="star-particle" style="left: 75%; animation-delay: 7s;">✨</div>
-    <div class="star-particle" style="left: 85%; animation-delay: 1.5s;">⭐</div>
-    <div class="star-particle" style="left: 95%; animation-delay: 2.5s;">✨</div>
-
-    <div class="heart-particle" style="left: 8%; animation-delay: 0.5s;">💖</div>
-    <div class="heart-particle" style="left: 18%; animation-delay: 1.5s;">💕</div>
-    <div class="heart-particle" style="left: 28%; animation-delay: 2.5s;">💖</div>
-    <div class="heart-particle" style="left: 38%; animation-delay: 3.5s;">💕</div>
-    <div class="heart-particle" style="left: 48%; animation-delay: 4.5s;">💖</div>
-    <div class="heart-particle" style="left: 58%; animation-delay: 5.5s;">💕</div>
-    <div class="heart-particle" style="left: 68%; animation-delay: 6.5s;">💖</div>
-    <div class="heart-particle" style="left: 78%; animation-delay: 7.5s;">💕</div>
-    <div class="heart-particle" style="left: 88%; animation-delay: 1.8s;">💖</div>
-    <div class="heart-particle" style="left: 98%; animation-delay: 3.2s;">💕</div>
+    <audio id="sound-correct" src="sounds/correct.mp3"></audio>
+    <audio id="sound-wrong" src="sounds/wrong.mp3"></audio>
 
     <script>
-        // Estado do jogo
-        let gameState = {
-            currentPosition: 1,
-            knowledgePoints: 0,
-            questionsAnswered: 0,
-            coins: 0,
-            isRolling: false,
-            gameEnded: false
-        };
+        const wheel = document.getElementById('roulette-wheel');
+        const rollButton = document.getElementById('roll-button');
 
-        // Perguntas educativas sobre dignidade menstrual
         const questions = [
-            // MÓDULO: HIGIENE E CUIDADOS BÁSICOS
-            {
-                question: "Em média, de quanto em quanto tempo o absorvente deve ser trocado para evitar riscos à saúde, dependendo do fluxo?",
-                options: [
-                    "Uma vez por dia",
-                    "Aproximadamente seis horas",
-                    "A cada 12 horas",
-                    "Apenas quando necessário"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Aproximadamente seis horas, mas caso o fluxo seja muito intenso você pode aumentar a frequência conforme sua necessidade.",
-                points: 10
-            },
-            {
-                question: "Ao fazer a higiene íntima durante a menstruação, onde você deve focar a limpeza com água e sabonete neutro?",
-                options: [
-                    "Fazer duchas vaginais internas",
-                    "Apenas na área externa da região íntima",
-                    "Usar perfumes íntimos",
-                    "Lavar apenas com papel higiênico"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Apenas na área externa da região íntima (não deve-se fazer ducha interna).",
-                points: 10
-            },
-            {
-                question: "Qual tipo de tecido é o mais recomendado para as calcinhas, especialmente no período menstrual?",
-                options: [
-                    "Tecido sintético",
-                    "Algodão",
-                    "Renda",
-                    "Poliéster"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Algodão, por ser mais limpo e confortável (evitar o tecido sintético).",
-                points: 10
-            },
-            {
-                question: "O uso de spray ou perfume íntimo é recomendado para a higiene íntima?",
-                options: [
-                    "Sim, sempre usar",
-                    "Não, deve-se evitar produtos com cheiro",
-                    "Apenas perfumes caros",
-                    "Só durante a menstruação"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Não, pois deve-se evitar produtos com cheiro e corantes que podem causar irritações e alergias.",
-                points: 10
-            },
-            // MÓDULO: SAÚDE E MITOS
-            {
-                question: "A ausência de higiene adequada (como a troca tardia do absorvente) pode colaborar com o crescimento de qual fungo em ambiente úmido e quente?",
-                options: [
-                    "Candidíase",
-                    "Gripe",
-                    "Resfriado",
-                    "Pneumonia"
-                ],
-                correct: 0,
-                explanation: "✅ Correto! Candidíase pode crescer em ambientes úmidos e quentes com higiene inadequada.",
-                points: 10
-            },
-            {
-                question: "A menstruação serve como um método de prevenção de gravidez ou de infecções sexualmente transmissíveis (IST)?",
-                options: [
-                    "Sim, previne gravidez",
-                    "Sim, previne IST",
-                    "Não, é preciso usar método contraceptivo e preservativo",
-                    "Previne apenas IST"
-                ],
-                correct: 2,
-                explanation: "✅ Correto! Não. É preciso usar método contraceptivo para gravidez e preservativo para IST.",
-                points: 10
-            },
-            {
-                question: "É proibido fazer exercícios físicos durante o período menstrual?",
-                options: [
-                    "Sim, é totalmente proibido",
-                    "Não há contraindicação, pode ajudar a reduzir cólicas",
-                    "Apenas exercícios leves",
-                    "Só com autorização médica"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Não há contraindicação, e a prática regular pode ajudar a reduzir as cólicas.",
-                points: 10
-            },
-            {
-                question: "Qual destes materiais é considerado impróprio para absorver o sangue, podendo resultar em doenças e infecções urogenitais?",
-                options: [
-                    "Absorvente descartável",
-                    "Panos sujos ou papel higiênico",
-                    "Coletor menstrual",
-                    "Absorvente de pano limpo"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Panos sujos ou papel higiênico podem causar infecções urogenitais.",
-                points: 10
-            },
-            // MÓDULO: ACESSO AO PROGRAMA
-            {
-                question: "Para retirar os absorventes na Farmácia Popular, qual documento essencial deve ser gerado pelo Meu SUS Digital, além do CPF e documento com foto?",
-                options: [
-                    "Receita médica",
-                    "A Autorização do Programa Dignidade Menstrual",
-                    "Cartão do SUS apenas",
-                    "Comprovante de renda"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! A 'Autorização do Programa Dignidade Menstrual' deve ser gerada pelo Meu SUS Digital.",
-                points: 10
-            },
-            {
-                question: "Qual é o período correto (em dias) que Cris tem direito a retirar um novo estoque de 40 absorventes?",
-                options: [
-                    "30 dias",
-                    "A cada 56 dias",
-                    "90 dias",
-                    "15 dias"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! A cada 56 dias (para cobrir dois ciclos menstruais).",
-                points: 10
-            },
-            {
-                question: "Se Cris esquecer de ir à farmácia por um mês, ela pode retirar os absorventes referentes ao mês anterior?",
-                options: [
-                    "Sim, sempre pode",
-                    "Não, não podem ser feitas retiradas de meses anteriores",
-                    "Só com justificativa médica",
-                    "Apenas uma vez por ano"
-                ],
-                correct: 1,
-                explanation: "✅ Correto! Não, pois não podem ser feitas retiradas referentes a meses anteriores.",
-                points: 10
-            }
+            { question: "Qual é o maior planeta do sistema solar?", options: ["Terra", "Marte", "Júpiter"], correct: 2, points: 10, answered: false },
+            { question: "Qual elemento químico tem o símbolo O?", options: ["Ouro", "Oxigênio", "Ozônio"], correct: 1, points: 10, answered: false },
+            { question: "Quem pintou a Mona Lisa?", options: ["Michelangelo", "Van Gogh", "Leonardo da Vinci"], correct: 2, points: 10, answered: false },
+            { question: "Qual é a capital do Brasil?", options: ["Rio de Janeiro", "Brasília", "São Paulo"], correct: 1, points: 10, answered: false },
+            { question: "Qual é o órgão responsável pelo bombeamento do sangue?", options: ["Fígado", "Coração", "Pulmão"], correct: 1, points: 10, answered: false }
         ];
 
-        // Configuração do tabuleiro
-        const boardConfig = {
-            totalCells: 20,
-            questionCells: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-            bombCells: [],
-            safeCells: []
+        const gameState = {
+            knowledgePoints: 0,
+            coins: 0,
+            questionsAnswered: 0,
+            isRolling: false
         };
 
-        // Criar tabuleiro
-        function createBoard() {
-            const container = document.getElementById('board-container');
-            container.innerHTML = '';
-
-            for (let i = 1; i <= boardConfig.totalCells; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'board-cell';
-                cell.id = `cell-${i}`;
-                
-                // Itens relacionados à higiene menstrual e dignidade
-                const hygieneItems = ['🩲', '🧻', '🚿', '🧼', '🩲', '🧻', '🚿', '🧼', '🩲', '🧻', '🚿', '🧼', '🩲', '🧻', '🚿', '🧼', '🩲', '🧻', '🚿', '🧼'];
-                
-                if (i === 1) {
-                    cell.classList.add('cell-start');
-                    cell.innerHTML = '🏁<br>INÍCIO<br>😊';
-                } else if (i === boardConfig.totalCells) {
-                    cell.classList.add('cell-finish');
-                    cell.innerHTML = '🏆<br>FIM<br>🥳';
-                } else {
-                    cell.classList.add('cell-question');
-                    cell.innerHTML = `${hygieneItems[i-1]}`;
-                }
-
-                container.appendChild(cell);
-            }
-
-            // Adicionar Cris na posição inicial
-            const startCell = document.getElementById('cell-1');
-            const cris = document.createElement('div');
-            cris.className = 'cris-player';
-            cris.id = 'cris-player';
-            cris.innerHTML = '👧';
-            startCell.appendChild(cris);
-        }
-
-        // Sistema de áudio compatível com iOS
-        let audioContext = null;
-        
-        function initAudioContext() {
-            if (!audioContext) {
-                try {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) {
-                    console.log('Audio não suportado');
-                    return false;
-                }
-            }
-            
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            return true;
-        }
-        
-        function playSound(frequency, duration, type = 'sine') {
-            if (!initAudioContext()) return;
-            
-            try {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-                oscillator.type = type;
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + duration);
-            } catch (e) {
-                // Falha silenciosa se áudio não funcionar
-            }
-        }
-
-        function playDiceRoll() {
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => {
-                    playSound(200 + Math.random() * 300, 0.1, 'square');
-                }, i * 100);
-            }
-        }
-
-        function playMoveSound() {
-            playSound(440, 0.2, 'sine');
-        }
-
-        function playQuestionSound() {
-            playSound(523, 0.3, 'triangle');
-        }
-
-        function playCorrectSound() {
-            const notes = [523, 659, 784];
-            notes.forEach((note, index) => {
-                setTimeout(() => playSound(note, 0.3, 'sine'), index * 150);
-            });
-        }
-
-        function playIncorrectSound() {
-            playSound(220, 0.5, 'sawtooth');
-        }
-
-        function playCoinSound() {
-            playSound(800, 0.2, 'sine');
-            setTimeout(() => playSound(1000, 0.15, 'sine'), 100);
-        }
-
-        // Animação de moedas flutuantes
-        function showCoinAnimation() {
-            playCoinSound();
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const coin = document.createElement('div');
-                    coin.className = 'floating-coin';
-                    coin.innerHTML = '🪙';
-                    coin.style.cssText = `
-                        position: fixed;
-                        font-size: 2em;
-                        z-index: 1000;
-                        pointer-events: none;
-                        left: ${50 + (Math.random() - 0.5) * 20}%;
-                        top: 50%;
-                        animation: coinFloat 2s ease-out forwards;
-                    `;
-                    document.body.appendChild(coin);
-                    setTimeout(() => coin.remove(), 2000);
-                }, i * 100);
-            }
-        }
-
-        // Girar roleta
-        function rollDice() {
-            if (gameState.isRolling || gameState.gameEnded) return;
-
-            gameState.isRolling = true;
-            document.getElementById('roll-button').disabled = true;
-            initAudioContext();
-
-            playDiceRoll();
-
-            const roulette = document.getElementById('roulette-wheel');
-            const rollResult = Math.floor(Math.random() * 6) + 1;
-
-            const sectionAngle = 60;
-            const baseRotation = (rollResult - 1) * sectionAngle;
-            const randomOffset = Math.random() * 40 - 20;
-            const finalAngle = baseRotation + randomOffset;
-            const totalRotation = 1440 + finalAngle;
-
-            roulette.classList.add('spinning');
-            roulette.style.transition = 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            roulette.style.transform = `rotate(${totalRotation}deg)`;
-
-            setTimeout(() => {
-                roulette.classList.remove('spinning');
-                roulette.style.transition = 'none';
-                setTimeout(() => {
-                    moveCris(rollResult);
-                }, 500);
-            }, 3000);
-        }
-
-        // Mover Cris no tabuleiro
-        function moveCris(steps) {
-            const newPosition = Math.min(gameState.currentPosition + steps, boardConfig.totalCells);
-            const cris = document.getElementById('cris-player');
-            
-            cris.remove();
-
-            let currentStep = gameState.currentPosition;
-            const moveInterval = setInterval(() => {
-                if (currentStep >= newPosition) {
-                    clearInterval(moveInterval);
-                    gameState.currentPosition = newPosition;
-                    updateGameInfo();
-                    checkCellType(newPosition);
-                    return;
-                }
-
-                currentStep++;
-                const targetCell = document.getElementById(`cell-${currentStep}`);
-                if (targetCell) {
-                    const existingCris = document.getElementById('cris-player');
-                    if (existingCris) existingCris.remove();
-                    
-                    const newCris = document.createElement('div');
-                    newCris.className = 'cris-player';
-                    newCris.id = 'cris-player';
-                    newCris.innerHTML = '👧';
-                    targetCell.appendChild(newCris);
-                    
-                    playMoveSound();
-                }
-            }, 400);
-        }
-
-        // Verificar tipo de célula
-        function checkCellType(position) {
-            if (position === boardConfig.totalCells) {
-                endGame(true);
-                return;
-            }
-
-            if (position > 1 && position < boardConfig.totalCells) {
-                playQuestionSound();
-                showQuestion();
-            } else {
-                enableRolling();
-            }
-        }
-
-        // Mostrar pergunta
-        function showQuestion() {
-            // Lógica para pegar uma pergunta não respondida
-            const availableQuestions = questions.filter(q => !q.answered);
-            if (availableQuestions.length === 0) {
-                questions.forEach(q => q.answered = false);
-            }
-            const questionPool = questions.filter(q => !q.answered);
-            const randomIndex = Math.floor(Math.random() * questionPool.length);
-            const randomQuestion = questionPool[randomIndex];
-
-            const modal = document.getElementById('question-modal');
-            const questionText = document.getElementById('question-text');
-            const optionsContainer = document.getElementById('answer-options');
-
-            questionText.textContent = randomQuestion.question;
-            optionsContainer.innerHTML = '';
-
-            randomQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'answer-option';
-                button.textContent = option;
-                button.type = 'button';
-                button.setAttribute('data-index', index);
-                
-                let buttonProcessing = false;
-                
-                function processAnswer(e) {
-                    if (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                    if (buttonProcessing) return false;
-                    buttonProcessing = true;
-                    
-                    const allButtons = document.querySelectorAll('#question-modal .answer-option');
-                    allButtons.forEach(btn => {
-                        btn.disabled = true;
-                        btn.style.pointerEvents = 'none';
-                        btn.style.opacity = '0.5';
-                    });
-                    
-                    setTimeout(() => {
-                        handleAnswer(index, randomQuestion, randomQuestion.explanation, randomQuestion.points);
-                    }, 150);
-                    
-                    return true;
-                }
-                
-                button.addEventListener('click', processAnswer, { passive: false });
-                button.addEventListener('touchend', processAnswer, { passive: false });
-
-                optionsContainer.appendChild(button);
-            });
-
-            modal.classList.add('show');
-        }
-
-        // Lidar com resposta
-        function handleAnswer(selectedIndex, questionObject, explanation, points) {
-            const options = document.querySelectorAll('#question-modal .answer-option');
-            
-            options.forEach((option, index) => {
-                option.disabled = true;
-                option.style.pointerEvents = 'none';
-                option.style.opacity = '0.7';
-                
-                if (index === questionObject.correct) {
-                    option.classList.add('answer-correct');
-                } else if (index === selectedIndex && index !== questionObject.correct) {
-                    option.classList.add('answer-incorrect');
-                }
-            });
-
-            if (selectedIndex === questionObject.correct) {
-                gameState.knowledgePoints += points;
-                gameState.coins += 5;
-                playCorrectSound();
-                showCoinAnimation();
-                showNotification(`🎉 Acerto! +${points} PC! +5 🪙. ${explanation}`, 'positive');
-            } else {
-                playIncorrectSound();
-                showNotification(`❌ Erro! ${explanation}`, 'negative');
-            }
-
-            questionObject.answered = true;
-            gameState.questionsAnswered++;
-
-            setTimeout(() => {
-                document.getElementById('question-modal').classList.remove('show');
-                updateGameInfo();
-                enableRolling();
-            }, 3000);
-        }
-
-        // Habilitar rolagem novamente
-        function enableRolling() {
-            gameState.isRolling = false;
-            document.getElementById('roll-button').disabled = false;
-        }
-
-        // Mostrar notificação
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type} show`;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Atualizar informações do jogo
         function updateGameInfo() {
-            document.getElementById('current-position').textContent = gameState.currentPosition;
             document.getElementById('knowledge-points').textContent = gameState.knowledgePoints;
             document.getElementById('coins').textContent = gameState.coins;
             document.getElementById('questions-answered').textContent = gameState.questionsAnswered;
         }
 
-        // Finalizar jogo
-        function endGame(victory) {
-            gameState.gameEnded = true;
-            document.getElementById('roll-button').disabled = true;
-            document.getElementById('game-container').style.display = 'none';
+        function playCorrectSound() {
+            document.getElementById('sound-correct').play();
+        }
 
-            const maxQuestions = boardConfig.totalCells - 2;
-            const maxPoints = maxQuestions * 10; 
-            const percentage = Math.round((gameState.knowledgePoints / maxPoints) * 100);
+        function playIncorrectSound() {
+            document.getElementById('sound-wrong').play();
+        }
 
-            const victoryModal = document.getElementById('victory-modal');
-            const victoryMessage = document.getElementById('victory-message');
-            const finalScore = document.getElementById('final-score');
-            const restartButton = document.getElementById('restart-game-victory');
+        function showCoinAnimation() {
+            const coin = document.createElement('div');
+            coin.textContent = '💰';
+            coin.className = 'coin-animation';
+            document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 1500);
+        }
 
-            restartButton.onclick = resetGame;
-            restartButton.ontouchend = (e) => { e.preventDefault(); resetGame(); };
+        function enableRolling() {
+            rollButton.disabled = false;
+            gameState.isRolling = false;
+        }
 
-            if (victory && percentage >= 90) {
-                playVictorySound();
-                victoryMessage.innerHTML = '🏆 PARABÉNS! VOCÊ É UM ESPECIALISTA EM DIGNIDADE MENSTRUAL! 🏆';
-                finalScore.textContent = `Pontuação Final: ${gameState.knowledgePoints} PC e ${gameState.coins} moedas (${percentage}% de aproveitamento).`;
-                victoryModal.classList.add('show');
+        function showQuestion() {
+            const availableQuestions = questions.filter(q => !q.answered);
+            if (availableQuestions.length === 0) {
+                questions.forEach(q => q.answered = false);
+            }
+
+            const questionPool = questions.filter(q => !q.answered);
+            const question = questionPool[Math.floor(Math.random() * questionPool.length)];
+            question.answered = true;
+
+            const questionText = document.getElementById('question-text');
+            const answerOptions = document.getElementById('answer-options');
+            const questionModal = document.getElementById('question-modal');
+
+            questionText.textContent = question.question;
+            answerOptions.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'answer-option';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index === question.correct, question);
+                answerOptions.appendChild(button);
+            });
+
+            questionModal.classList.add('show');
+        }
+
+        function checkAnswer(isCorrect, question) {
+            const modal = document.getElementById('question-modal');
+            modal.classList.remove('show');
+
+            if (isCorrect) {
+                playCorrectSound();
+                showCoinAnimation();
+                gameState.knowledgePoints += question.points;
+                gameState.coins += 5;
             } else {
                 playIncorrectSound();
-                victoryMessage.innerHTML = '😔 QUASE LÁ! Reveja seus conhecimentos e tente novamente!';
-                finalScore.textContent = `Pontuação Final: ${gameState.knowledgePoints} PC e ${gameState.coins} moedas (${percentage}% de aproveitamento).`;
-                victoryModal.classList.add('show');
             }
-        }
-        
-        // Função para iniciar o jogo após o vídeo
-        function startGame() {
-            document.getElementById('intro-modal').classList.remove('show');
-            document.getElementById('game-container').style.display = 'flex';
-            resetGame(); 
-        }
 
-        // Resetar jogo
-        function resetGame() {
-            gameState = {
-                currentPosition: 1,
-                knowledgePoints: 0,
-                questionsAnswered: 0,
-                coins: 0,
-                isRolling: false,
-                gameEnded: false
-            };
-            questions.forEach(q => q.answered = false);
-            
-            document.querySelectorAll('.bomb-explosion, .victory-animation').forEach(el => el.remove());
-            
-            createBoard();
+            gameState.questionsAnswered++;
             updateGameInfo();
-            document.getElementById('roll-button').disabled = false;
-            document.getElementById('question-modal').classList.remove('show');
-            document.getElementById('victory-modal').classList.remove('show');
-            document.getElementById('game-container').style.display = 'flex'; 
+            enableRolling();
         }
 
-        // Inicialização otimizada do jogo
-        function initializeGame() {
-            // Configurar altura para compatibilidade mobile (iOS/Android)
-            const setIOSHeight = () => {
-                const vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
-                document.body.style.height = window.innerHeight + 'px';
-                const gameContainer = document.getElementById('game-container');
-                if (gameContainer && gameContainer.style.display === 'flex') {
-                     gameContainer.style.height = window.innerHeight + 'px';
-                }
-            };
-            setIOSHeight();
-            window.addEventListener('resize', setIOSHeight);
-            window.addEventListener('orientationchange', () => setTimeout(setIOSHeight, 500));
-            
-            // Cria elementos do jogo
-            createBoard();
-            updateGameInfo();
-            
-            // Ativação do áudio 
-            const initAudio = function() {
-                initAudioContext();
-                document.removeEventListener('touchstart', initAudio);
-                document.removeEventListener('click', initAudio);
-            };
-            document.addEventListener('touchstart', initAudio, { once: true });
-            document.addEventListener('click', initAudio, { once: true });
-            
-            // Configura o botão de começar
-            const startButton = document.getElementById('start-button');
-            if (startButton) {
-                startButton.addEventListener('click', startGame, { passive: false });
-                startButton.addEventListener('touchend', (e) => { e.preventDefault(); startGame(); }, { passive: false });
-            }
+        rollButton.addEventListener('click', () => {
+            if (gameState.isRolling) return;
+            gameState.isRolling = true;
+            rollButton.disabled = true;
 
-            // Configura o botão de rolar a roleta
-            const rollButton = document.getElementById('roll-button');
-            if (rollButton) {
-                rollButton.addEventListener('click', rollDice, { passive: false });
-                rollButton.addEventListener('touchend', (e) => { e.preventDefault(); setTimeout(rollDice, 50); }, { passive: false });
-            }
-            
-            const rouletteContainer = document.getElementById('roulette-container');
-            if (rouletteContainer) {
-                rouletteContainer.addEventListener('click', rollDice, { passive: false });
-                rouletteContainer.addEventListener('touchend', (e) => { e.preventDefault(); setTimeout(rollDice, 50); }, { passive: false });
-            }
-            
-            const restartVictoryButton = document.getElementById('restart-game-victory');
-            if (restartVictoryButton) {
-                restartVictoryButton.addEventListener('click', resetGame);
-                restartVictoryButton.addEventListener('touchend', (e) => { e.preventDefault(); resetGame(); });
-            }
+            const degrees = Math.floor(3600 + Math.random() * 360);
+            wheel.style.transform = `rotate(${degrees}deg)`;
 
-            // Inicia com a tela de introdução
-            document.getElementById('game-container').style.display = 'none';
-            document.getElementById('intro-modal').classList.add('show');
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeGame);
-        } else {
-            initializeGame();
-        }
+            setTimeout(() => {
+                showQuestion();
+            }, 3000);
+        });
     </script>
 </body>
 </html>
